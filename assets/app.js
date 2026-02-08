@@ -16,11 +16,12 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 const listEl = document.getElementById("list");
 const venueEl = document.getElementById("venue");
+const mapEl = document.getElementById("map");
 
 function buildPopup(shop) {
   const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
     shop.name
-  )}" target="_blank" rel="noopener">Googleで調べる</a>`;
+  )}" target="_blank" rel="noopener">検索する</a>`;
   const phone = shop.phone
     ? `<a href="tel:${shop.phone}" class="tel">${shop.phone}</a><br />`
     : "";
@@ -37,7 +38,7 @@ function buildPopup(shop) {
 function buildVenuePopup(venue) {
   const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
     venue.name
-  )}" target="_blank" rel="noopener">Googleで調べる</a>`;
+  )}" target="_blank" rel="noopener">検索する</a>`;
   const phone = venue.phone
     ? `<a href="tel:${venue.phone}" class="tel">${venue.phone}</a><br />`
     : "";
@@ -85,6 +86,9 @@ function renderList(items) {
       setActive(id);
       marker.openPopup();
       map.setView(marker.getLatLng(), Math.max(map.getZoom(), 14));
+      if (window.matchMedia("(max-width: 900px)").matches) {
+        mapEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     });
   });
 }
