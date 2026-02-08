@@ -2,6 +2,7 @@ const state = {
   shops: [],
   markers: new Map(),
   activeId: null,
+  venue: null,
 };
 
 const map = L.map("map", {
@@ -17,6 +18,10 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 const listEl = document.getElementById("list");
 const venueEl = document.getElementById("venue");
 const mapEl = document.getElementById("map");
+const locateBtn = document.getElementById("locate");
+
+let userMarker = null;
+let userCircle = null;
 
 function buildPopup(shop) {
   const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
@@ -121,6 +126,7 @@ function initMap(shops, venue) {
   });
 }
 
+
 function renderVenue(venue) {
   if (!venue) return;
   venueEl.innerHTML = `
@@ -154,6 +160,7 @@ Promise.all([fetch("data/shops.json"), fetch("data/venue.json")])
     const shops = await shopsRes.json();
     const venue = await venueRes.json();
     state.shops = shops;
+    state.venue = venue;
     initMap(shops, venue);
     addVenueMarker(venue);
     renderVenue(venue);
@@ -162,3 +169,56 @@ Promise.all([fetch("data/shops.json"), fetch("data/venue.json")])
   .catch(() => {
     listEl.innerHTML = "<p class=\"empty\">データの読み込みに失敗しました。</p>";
   });
+
+if (locateBtn) {
+  locateBtn.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      alert("このブラウザでは現在地を取得できません。");
+      return;
+    }
+    locateBtn.disabled = true;
+    locateBtn.textContent = "現在地取得中...";
+    map.locate({ setView: true, maxZoom: 15, enableHighAccuracy: true });
+  });
+
+  map.on("locationfound", (e) => {
+    if (userMarker) {
+      userMarker.remove();
+    }
+    if (userCircle) {
+      userCircle.remove();
+    }
+    const userIcon = L.divIcon({
+      className: "user-location",
+      iconSize: [14, 14],
+    });
+    userMarker = L.marker(e.latlng, { icon: userIcon })
+      .addTo(map)
+      .bindPopup("現在地");
+    userCircle = L.circle(e.latlng, {
+      radius: e.accuracy,
+      color: "#2f7ea8",
+      fillColor: "#2f7ea8",
+      fillOpacity: 0.15,
+      weight: 1,
+    }).addTo(map);
+    const points = state.shops.map((shop) => [shop.lat, shop.lng]);
+    if (state.venue) {
+      points.push([state.venue.lat, state.venue.lng]);
+    }
+    points.push([e.latlng.lat, e.latlng.lng]);
+    map.fitBounds(L.latLngBounds(points).pad(0.2));
+    locateBtn.disabled = false;
+    locateBtn.textContent = "現在地を更新";
+  });
+
+  map.on("locationerror", () => {
+    locateBtn.disabled = false;
+    locateBtn.textContent = "現在地を更新";
+    alert("現在地の取得に失敗しました。");
+  });
+}
+
+if (navigator.geolocation) {
+  map.locate({ setView: true, maxZoom: 15, enableHighAccuracy: true });
+}

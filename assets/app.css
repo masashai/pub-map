@@ -69,6 +69,30 @@ body {
   padding: 16px 32px 32px;
 }
 
+.locate-btn {
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  padding: 10px 18px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.locate-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(27, 27, 27, 0.12);
+}
+
+.locate-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
 .list {
   background: var(--card);
   border: 1px solid var(--stroke);
@@ -207,6 +231,15 @@ body {
 .icon {
   font-size: 16px;
   line-height: 1;
+}
+
+.user-location {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #1d4ed8;
+  border: 2px solid #ffffff;
+  box-shadow: 0 6px 14px rgba(29, 78, 216, 0.35);
 }
 
 .popup-line {
