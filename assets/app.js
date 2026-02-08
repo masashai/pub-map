@@ -21,34 +21,46 @@ const mapEl = document.getElementById("map");
 function buildPopup(shop) {
   const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
     shop.name
-  )}" target="_blank" rel="noopener">検索する</a>`;
-  const phone = shop.phone
-    ? `<a href="tel:${shop.phone}" class="tel">${shop.phone}</a><br />`
+  )}" target="_blank" rel="noopener" class="icon-btn" aria-label="Googleで調べる">
+    <span class="icon">🔎</span>
+  </a>`;
+  const mapLink = `<a href="https://www.google.com/maps/search/?api=1&query=${shop.lat},${shop.lng}" target="_blank" rel="noopener" class="icon-btn" aria-label="Google mapを開く">
+    <span class="icon">🗺️</span>
+  </a>`;
+  const phoneLink = shop.phone
+    ? `<a href="tel:${shop.phone}" class="icon-btn" aria-label="電話をかける">
+        <span class="icon">📞</span>
+      </a>`
     : "";
+  const actions = `<div class="actions">${phoneLink}${mapLink}${link}</div>`;
   return `
     <strong>${shop.name}</strong><br />
-    <span>${shop.category}</span><br />
-    <span>${shop.address ?? ""}</span><br />
-    ${phone}
-    <span>${shop.note ?? ""}</span><br />
-    ${link}
+    <div class="popup-line">${shop.address ?? ""}</div>
+    <div class="popup-note">${shop.note ?? ""}</div>
+    ${actions}
   `;
 }
 
 function buildVenuePopup(venue) {
   const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
     venue.name
-  )}" target="_blank" rel="noopener">検索する</a>`;
-  const phone = venue.phone
-    ? `<a href="tel:${venue.phone}" class="tel">${venue.phone}</a><br />`
+  )}" target="_blank" rel="noopener" class="icon-btn" aria-label="Googleで調べる">
+    <span class="icon">🔎</span>
+  </a>`;
+  const mapLink = `<a href="https://www.google.com/maps/search/?api=1&query=${venue.lat},${venue.lng}" target="_blank" rel="noopener" class="icon-btn" aria-label="Google mapを開く">
+    <span class="icon">🗺️</span>
+  </a>`;
+  const phoneLink = venue.phone
+    ? `<a href="tel:${venue.phone}" class="icon-btn" aria-label="電話をかける">
+        <span class="icon">📞</span>
+      </a>`
     : "";
+  const actions = `<div class="actions">${phoneLink}${mapLink}${link}</div>`;
   return `
     <strong>${venue.name}</strong><br />
-    <span>式場</span><br />
-    <span>${venue.address ?? ""}</span><br />
-    ${phone}
-    <span>${venue.note ?? ""}</span><br />
-    ${link}
+    <div class="popup-line">${venue.address ?? ""}</div>
+    <div class="popup-note">${venue.note ?? ""}</div>
+    ${actions}
   `;
 }
 
@@ -70,7 +82,7 @@ function renderList(items) {
       (shop) => `
         <article class="card" data-id="${shop.id}">
           <h2>${shop.name}</h2>
-          <div class="meta">${shop.category} ・ ${shop.address ?? ""}</div>
+          <div class="meta">${shop.address ?? ""}</div>
           <div class="meta">${shop.phone ?? ""}</div>
           <p class="note">${shop.note ?? ""}</p>
         </article>
