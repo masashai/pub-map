@@ -19,6 +19,10 @@ const listEl = document.getElementById("list");
 const venueEl = document.getElementById("venue");
 const mapEl = document.getElementById("map");
 const locateBtn = document.getElementById("locate");
+const listOpenBtn = document.getElementById("list-open");
+const listCloseBtn = document.getElementById("list-close");
+const listModal = document.getElementById("list-modal");
+const modalBackdrop = listModal?.querySelector(".modal-backdrop");
 
 let userMarker = null;
 let userCircle = null;
@@ -103,6 +107,9 @@ function renderList(items) {
       setActive(id);
       marker.openPopup();
       map.setView(marker.getLatLng(), Math.max(map.getZoom(), 14));
+      if (listModal?.classList.contains("is-open")) {
+        closeListModal();
+      }
       if (window.matchMedia("(max-width: 900px)").matches) {
         mapEl.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -178,7 +185,7 @@ if (locateBtn) {
     }
     locateBtn.disabled = true;
     locateBtn.textContent = "現在地取得中...";
-    map.locate({ setView: true, maxZoom: 15, enableHighAccuracy: true });
+    map.locate({ setView: false, maxZoom: 15, enableHighAccuracy: true });
   });
 
   map.on("locationfound", (e) => {
@@ -220,5 +227,37 @@ if (locateBtn) {
 }
 
 if (navigator.geolocation) {
-  map.locate({ setView: true, maxZoom: 15, enableHighAccuracy: true });
+  map.locate({ setView: false, maxZoom: 15, enableHighAccuracy: true });
 }
+
+function openListModal() {
+  if (!listModal) return;
+  listModal.classList.add("is-open");
+  listModal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeListModal() {
+  if (!listModal) return;
+  listModal.classList.remove("is-open");
+  listModal.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+}
+
+if (listOpenBtn) {
+  listOpenBtn.addEventListener("click", openListModal);
+}
+
+if (listCloseBtn) {
+  listCloseBtn.addEventListener("click", closeListModal);
+}
+
+if (modalBackdrop) {
+  modalBackdrop.addEventListener("click", closeListModal);
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeListModal();
+  }
+});

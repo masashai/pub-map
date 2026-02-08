@@ -10,24 +10,35 @@
   <body>
     <header class="site-header">
       <div class="brand">
-        <div class="brand-mark">Map</div>
         <div>
-          <h1>おすすめスポット</h1>
-          <p>10件のおすすめを地図で表示</p>
+          <h1>渋谷居酒屋MAP🍺</h1>
         </div>
       </div>
-      <button id="locate" class="locate-btn" type="button">現在地を更新</button>
+      <div class="header-actions">
+        <button id="list-open" class="locate-btn" type="button">一覧を見る</button>
+        <button id="locate" class="locate-btn" type="button">現在地を更新</button>
+      </div>
     </header>
 
     <main class="layout">
-      <section class="list" aria-label="スポット一覧">
-        <div id="venue" class="venue-card"></div>
-        <div id="list" class="list-inner"></div>
-      </section>
       <section class="map" aria-label="地図">
         <div id="map"></div>
       </section>
     </main>
+
+    <div id="list-modal" class="modal" aria-hidden="true">
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <h2 id="modal-title">スポット一覧</h2>
+          <button id="list-close" class="icon-btn" type="button" aria-label="閉じる">
+            <span class="icon">✕</span>
+          </button>
+        </div>
+        <div id="venue" class="venue-card"></div>
+        <div id="list" class="list-inner"></div>
+      </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="assets/app.js"></script>
