@@ -16,24 +16,11 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 const listEl = document.getElementById("list");
 const venueEl = document.getElementById("venue");
-const searchEl = document.getElementById("search");
-const categoryEl = document.getElementById("category");
-
-function normalize(text) {
-  return text.toLowerCase();
-}
-
-function matches(shop, query, category) {
-  const haystack = normalize(`${shop.name} ${shop.category} ${shop.note ?? ""}`);
-  const okQuery = !query || haystack.includes(query);
-  const okCategory = !category || shop.category === category;
-  return okQuery && okCategory;
-}
 
 function buildPopup(shop) {
   const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
     shop.name
-  )}" target="_blank" rel="noopener">検索する</a>`;
+  )}" target="_blank" rel="noopener">Googleで調べる</a>`;
   const phone = shop.phone
     ? `<a href="tel:${shop.phone}" class="tel">${shop.phone}</a><br />`
     : "";
@@ -50,7 +37,7 @@ function buildPopup(shop) {
 function buildVenuePopup(venue) {
   const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
     venue.name
-  )}" target="_blank" rel="noopener">検索する</a>`;
+  )}" target="_blank" rel="noopener">Googleで調べる</a>`;
   const phone = venue.phone
     ? `<a href="tel:${venue.phone}" class="tel">${venue.phone}</a><br />`
     : "";
@@ -102,41 +89,6 @@ function renderList(items) {
   });
 }
 
-function updateMarkers(items) {
-  const visible = new Set(items.map((shop) => shop.id));
-  state.markers.forEach((marker, id) => {
-    const isVisible = visible.has(id);
-    if (isVisible && !map.hasLayer(marker)) {
-      marker.addTo(map);
-    }
-    if (!isVisible && map.hasLayer(marker)) {
-      marker.remove();
-    }
-  });
-}
-
-function applyFilter() {
-  const query = normalize(searchEl.value.trim());
-  const category = categoryEl.value;
-  const filtered = state.shops.filter((shop) => matches(shop, query, category));
-  renderList(filtered);
-  updateMarkers(filtered);
-}
-
-function setupFilters(shops) {
-  const categories = Array.from(new Set(shops.map((shop) => shop.category)));
-  categories.sort();
-  categories.forEach((category) => {
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    categoryEl.appendChild(option);
-  });
-
-  searchEl.addEventListener("input", applyFilter);
-  categoryEl.addEventListener("change", applyFilter);
-}
-
 function initMap(shops, venue) {
   const points = shops.map((shop) => [shop.lat, shop.lng]);
   if (venue) {
@@ -186,7 +138,6 @@ Promise.all([fetch("data/shops.json"), fetch("data/venue.json")])
     const shops = await shopsRes.json();
     const venue = await venueRes.json();
     state.shops = shops;
-    setupFilters(shops);
     initMap(shops, venue);
     addVenueMarker(venue);
     renderVenue(venue);
