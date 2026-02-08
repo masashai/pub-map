@@ -10,6 +10,7 @@
   --card: rgba(255, 255, 255, 0.92);
   --stroke: rgba(27, 27, 27, 0.1);
   --shadow: 0 16px 40px rgba(27, 27, 27, 0.12);
+  --header-height: 56px;
 }
 
 * {
@@ -27,6 +28,7 @@ body {
     radial-gradient(circle at 90% 0%, rgba(47, 126, 168, 0.2), transparent 50%),
     var(--paper);
   display: block;
+  padding-top: var(--header-height);
 }
 
 .site-header {
@@ -36,16 +38,13 @@ body {
   right: 0;
   z-index: 900;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 16px;
   align-items: center;
-  justify-content: flex-end;
-  padding: 12px 16px;
-  background: linear-gradient(
-    to bottom,
-    rgba(247, 243, 234, 0.75),
-    rgba(247, 243, 234, 0)
-  );
+  justify-content: space-between;
+  height: var(--header-height);
+  padding: 8px 12px;
+  background: rgba(224, 122, 95, 0.95);
   pointer-events: none;
 }
 
@@ -61,11 +60,18 @@ body {
   align-items: center;
   gap: 16px;
   pointer-events: auto;
-  text-align: right;
+  text-align: left;
   padding: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+.brand > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
 }
 
 .brand-mark {
@@ -79,22 +85,24 @@ body {
 }
 
 .brand h1 {
-  margin: 0 0 4px;
+  margin: 0;
   font-size: 20px;
+  color: #ffffff;
   text-shadow: 0 1px 6px rgba(15, 23, 42, 0.2);
 }
 
 .brand p {
   margin: 0;
-  color: var(--muted);
+  color: #e5e7eb;
   font-size: 12px;
+  font-weight: 700;
   text-shadow: 0 1px 6px rgba(15, 23, 42, 0.15);
 }
 
 .layout {
   display: flex;
   padding: 0;
-  height: 100vh;
+  height: calc(100vh - var(--header-height));
 }
 
 .locate-btn {
@@ -211,6 +219,19 @@ body {
 
 .leaflet-container {
   font-family: "Zen Kaku Gothic New", sans-serif;
+}
+
+.leaflet-top {
+  top: auto;
+}
+
+.leaflet-left {
+  left: 12px;
+}
+
+.leaflet-top.leaflet-left {
+  top: auto;
+  bottom: 16px;
 }
 
 .tel {

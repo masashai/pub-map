@@ -137,7 +137,7 @@ function initMap(shops, venue) {
 function renderVenue(venue) {
   if (!venue) return;
   venueEl.innerHTML = `
-    <h2>式場：${venue.name}</h2>
+    <h2>${venue.name}</h2>
     <div class="meta">${venue.address ?? ""}</div>
     <div class="meta">${venue.phone ?? ""}</div>
     <p class="note">${venue.note ?? ""}</p>
@@ -148,7 +148,7 @@ function addVenueMarker(venue) {
   if (!venue) return;
   const venueIcon = L.icon({
     iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png",
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
     shadowUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
     iconSize: [25, 41],
