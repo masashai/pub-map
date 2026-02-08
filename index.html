@@ -3,43 +3,43 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GitHub Pages</title>
-    <style>
-      :root {
-        color-scheme: light;
-      }
-      body {
-        margin: 0;
-        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-        background: #f6f7fb;
-        color: #0f172a;
-        display: grid;
-        place-items: center;
-        min-height: 100vh;
-      }
-      main {
-        text-align: center;
-        padding: 48px 24px;
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-      }
-      h1 {
-        margin: 0 0 8px;
-        font-size: 28px;
-      }
-      p {
-        margin: 0;
-        font-size: 16px;
-        color: #475569;
-      }
-    </style>
+    <title>おすすめスポットマップ</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="assets/app.css" />
   </head>
   <body>
-    <main>
-      <h1>GitHub Pages Ready</h1>
-      <p>このページは GitHub Pages で公開できます。</p>
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark">Map</div>
+        <div>
+          <h1>おすすめスポット</h1>
+          <p>10件のおすすめを地図で表示</p>
+        </div>
+      </div>
+      <div class="controls">
+        <label class="control">
+          <span>検索</span>
+          <input id="search" type="search" placeholder="店名やカテゴリ" />
+        </label>
+        <label class="control">
+          <span>カテゴリ</span>
+          <select id="category">
+            <option value="">すべて</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="list" aria-label="スポット一覧">
+        <div id="list" class="list-inner"></div>
+      </section>
+      <section class="map" aria-label="地図">
+        <div id="map"></div>
+      </section>
     </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="assets/app.js"></script>
   </body>
 </html>

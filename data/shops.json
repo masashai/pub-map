@@ -1,0 +1,102 @@
+[
+  {
+    "id": "shop-001",
+    "name": "喫茶アトリウム",
+    "lat": 35.681771,
+    "lng": 139.766447,
+    "category": "カフェ",
+    "area": "東京駅周辺",
+    "note": "窓際席が静かでおすすめ",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-002",
+    "name": "銀杏ベーカリー",
+    "lat": 35.679705,
+    "lng": 139.767912,
+    "category": "ベーカリー",
+    "area": "丸の内",
+    "note": "朝限定のフォカッチャ",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-003",
+    "name": "和食と小鉢 ひより",
+    "lat": 35.683401,
+    "lng": 139.769103,
+    "category": "和食",
+    "area": "八重洲",
+    "note": "小鉢が丁寧",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-004",
+    "name": "本棚と珈琲",
+    "lat": 35.680281,
+    "lng": 139.763428,
+    "category": "書店",
+    "area": "大手町",
+    "note": "選書が面白い",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-005",
+    "name": "花屋ミモザ",
+    "lat": 35.678927,
+    "lng": 139.766012,
+    "category": "花屋",
+    "area": "有楽町",
+    "note": "季節の花束が豊富",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-006",
+    "name": "スイーツ研究所",
+    "lat": 35.684754,
+    "lng": 139.771219,
+    "category": "スイーツ",
+    "area": "日本橋",
+    "note": "限定プリンが人気",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-007",
+    "name": "定食や まる",
+    "lat": 35.676983,
+    "lng": 139.765402,
+    "category": "定食",
+    "area": "銀座",
+    "note": "日替わりが充実",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-008",
+    "name": "雑貨ノマド",
+    "lat": 35.682485,
+    "lng": 139.772488,
+    "category": "雑貨",
+    "area": "京橋",
+    "note": "旅気分のセレクト",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-009",
+    "name": "夜景バー 霞",
+    "lat": 35.675839,
+    "lng": 139.768604,
+    "category": "バー",
+    "area": "日比谷",
+    "note": "窓際カウンター推し",
+    "url": "https://example.com"
+  },
+  {
+    "id": "shop-010",
+    "name": "ラーメン白波",
+    "lat": 35.686213,
+    "lng": 139.770881,
+    "category": "ラーメン",
+    "area": "神田",
+    "note": "細麺と澄んだスープ",
+    "url": "https://example.com"
+  }
+]
