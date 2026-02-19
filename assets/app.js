@@ -4,6 +4,7 @@ const state = {
   activeId: null,
   venue: null,
 };
+const VENUE_ITEM_ID = "__venue__";
 
 const map = L.map("map", {
   zoomControl: true,
@@ -16,7 +17,6 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 const listEl = document.getElementById("list");
-const venueEl = document.getElementById("venue");
 const mapEl = document.getElementById("map");
 const locateBtn = document.getElementById("locate");
 const listOpenBtn = document.getElementById("list-open");
@@ -46,29 +46,6 @@ function buildPopup(shop) {
     <strong>${shop.name}</strong><br />
     <div class="popup-line">${shop.address ?? ""}</div>
     <div class="popup-note">${shop.note ?? ""}</div>
-    ${actions}
-  `;
-}
-
-function buildVenuePopup(venue) {
-  const link = `<a href="https://www.google.com/search?q=${encodeURIComponent(
-    venue.name
-  )}" target="_blank" rel="noopener" class="icon-btn" aria-label="Googleで調べる">
-    <span class="icon">🔎</span>
-  </a>`;
-  const mapLink = `<a href="https://www.google.com/maps/search/?api=1&query=${venue.lat},${venue.lng}" target="_blank" rel="noopener" class="icon-btn" aria-label="Google mapを開く">
-    <span class="icon">🗺️</span>
-  </a>`;
-  const phoneLink = venue.phone
-    ? `<a href="tel:${venue.phone}" class="icon-btn" aria-label="電話をかける">
-        <span class="icon">📞</span>
-      </a>`
-    : "";
-  const actions = `<div class="actions">${phoneLink}${mapLink}${link}</div>`;
-  return `
-    <strong>${venue.name}</strong><br />
-    <div class="popup-line">${venue.address ?? ""}</div>
-    <div class="popup-note">${venue.note ?? ""}</div>
     ${actions}
   `;
 }
@@ -117,10 +94,10 @@ function renderList(items) {
   });
 }
 
-function initMap(shops, venue) {
+function initMap(shops) {
   const points = shops.map((shop) => [shop.lat, shop.lng]);
-  if (venue) {
-    points.push([venue.lat, venue.lng]);
+  if (state.venue) {
+    points.push([state.venue.lat, state.venue.lng]);
   }
   const bounds = L.latLngBounds(points);
   map.fitBounds(bounds.pad(0.2));
@@ -133,15 +110,9 @@ function initMap(shops, venue) {
   });
 }
 
-
-function renderVenue(venue) {
-  if (!venue) return;
-  venueEl.innerHTML = `
-    <h2>${venue.name}</h2>
-    <div class="meta">${venue.address ?? ""}</div>
-    <div class="meta">${venue.phone ?? ""}</div>
-    <p class="note">${venue.note ?? ""}</p>
-  `;
+function buildListItems(shops, venue) {
+  if (!venue) return shops;
+  return [{ ...venue, id: VENUE_ITEM_ID }, ...shops];
 }
 
 function addVenueMarker(venue) {
@@ -157,9 +128,11 @@ function addVenueMarker(venue) {
     shadowSize: [41, 41],
   });
   const marker = L.marker([venue.lat, venue.lng], { icon: venueIcon }).bindPopup(
-    buildVenuePopup(venue)
+    buildPopup(venue)
   );
+  marker.on("click", () => setActive(VENUE_ITEM_ID));
   marker.addTo(map);
+  state.markers.set(VENUE_ITEM_ID, marker);
 }
 
 Promise.all([fetch("data/shops.json"), fetch("data/venue.json")])
@@ -168,10 +141,9 @@ Promise.all([fetch("data/shops.json"), fetch("data/venue.json")])
     const venue = await venueRes.json();
     state.shops = shops;
     state.venue = venue;
-    initMap(shops, venue);
+    initMap(shops);
     addVenueMarker(venue);
-    renderVenue(venue);
-    renderList(shops);
+    renderList(buildListItems(shops, venue));
   })
   .catch(() => {
     listEl.innerHTML = "<p class=\"empty\">データの読み込みに失敗しました。</p>";
