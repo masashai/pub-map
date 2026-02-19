@@ -227,42 +227,75 @@ function setLocateLoading(isLoading) {
   locateBtn.textContent = isLoading ? "現在地取得中..." : "現在地を更新";
 }
 
-function updateUserLocation() {
+function formatGeoError(error) {
+  if (!error) return "現在地の取得に失敗しました。";
+  if (error.code === error.PERMISSION_DENIED) {
+    return "位置情報の利用が拒否されています。ブラウザ設定で許可してください。";
+  }
+  if (error.code === error.POSITION_UNAVAILABLE) {
+    return "現在地を特定できませんでした。電波状況を確認してください。";
+  }
+  if (error.code === error.TIMEOUT) {
+    return "現在地取得がタイムアウトしました。もう一度お試しください。";
+  }
+  return "現在地の取得に失敗しました。";
+}
+
+function getCurrentPosition(options) {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+  });
+}
+
+async function updateUserLocation() {
   if (!navigator.geolocation) {
     alert("このブラウザでは現在地を取得できません。");
     return;
   }
+  if (!window.isSecureContext) {
+    alert("現在地取得は HTTPS または localhost でのみ利用できます。");
+    return;
+  }
 
   setLocateLoading(true);
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lngLat = [position.coords.longitude, position.coords.latitude];
-
-      if (userMarker) {
-        userMarker.remove();
-      }
-
-      const userEl = document.createElement("div");
-      userEl.className = "user-location";
-
-      userMarker = new maplibregl.Marker({ element: userEl })
-        .setLngLat(lngLat)
-        .setPopup(new maplibregl.Popup({ offset: 12 }).setText("現在地"))
-        .addTo(map);
-
-      fitToPoints([lngLat]);
-      setLocateLoading(false);
-    },
-    () => {
-      setLocateLoading(false);
-      alert("現在地の取得に失敗しました。");
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0,
+  try {
+    let position;
+    try {
+      position = await getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 0,
+      });
+    } catch (error) {
+      // Retry with lower accuracy because some environments fail with high accuracy.
+      position = await getCurrentPosition({
+        enableHighAccuracy: false,
+        timeout: 12000,
+        maximumAge: 30000,
+      });
     }
-  );
+
+    const lngLat = [position.coords.longitude, position.coords.latitude];
+
+    if (userMarker) {
+      userMarker.remove();
+    }
+
+    const userEl = document.createElement("div");
+    userEl.className = "user-location";
+
+    userMarker = new maplibregl.Marker({ element: userEl })
+      .setLngLat(lngLat)
+      .setPopup(new maplibregl.Popup({ offset: 12 }).setText("現在地"))
+      .addTo(map);
+
+    fitToPoints([lngLat]);
+  } catch (error) {
+    console.error("現在地取得エラー:", error);
+    alert(formatGeoError(error));
+  } finally {
+    setLocateLoading(false);
+  }
 }
 
 async function fetchJson(url) {
