@@ -59,6 +59,7 @@ const modalBackdrop = listModal?.querySelector(".modal-backdrop");
 
 let userMarker = null;
 const ROTATE_STEP_DEGREE = 15;
+const GEO_HARD_TIMEOUT_MS = 3000;
 
 function createPinElement(color) {
   const img = document.createElement("img");
@@ -243,9 +244,38 @@ function formatGeoError(error) {
   return `現在地の取得に失敗しました。${detail}`;
 }
 
+function createGeoTimeoutError() {
+  return {
+    code: 3,
+    TIMEOUT: 3,
+    message: `位置情報の取得が${GEO_HARD_TIMEOUT_MS / 1000}秒以内に完了しませんでした。`,
+  };
+}
+
 function getCurrentPosition(options) {
   return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+    let settled = false;
+    const timerId = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(createGeoTimeoutError());
+    }, GEO_HARD_TIMEOUT_MS);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timerId);
+        resolve(position);
+      },
+      (error) => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timerId);
+        reject(error);
+      },
+      options
+    );
   });
 }
 
@@ -261,21 +291,11 @@ async function updateUserLocation() {
 
   setLocateLoading(true);
   try {
-    let position;
-    try {
-      position = await getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 30000,
-        maximumAge: 30000,
-      });
-    } catch (error) {
-      // Retry with lower accuracy because some environments fail with high accuracy.
-      position = await getCurrentPosition({
-        enableHighAccuracy: false,
-        timeout: 30000,
-        maximumAge: 120000,
-      });
-    }
+    const position = await getCurrentPosition({
+      enableHighAccuracy: false,
+      timeout: GEO_HARD_TIMEOUT_MS,
+      maximumAge: 120000,
+    });
 
     const lngLat = [position.coords.longitude, position.coords.latitude];
 
