@@ -217,21 +217,24 @@ body {
   height: 100%;
 }
 
-.leaflet-container {
+.maplibregl-map {
   font-family: "Zen Kaku Gothic New", sans-serif;
 }
 
-.leaflet-top {
-  top: auto;
+.maplibregl-popup-content {
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  color: var(--ink);
 }
 
-.leaflet-left {
+.maplibregl-ctrl-bottom-left {
   left: 12px;
+  bottom: 16px;
 }
 
-.leaflet-top.leaflet-left {
-  top: auto;
-  bottom: 16px;
+.marker-pin {
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .tel {
