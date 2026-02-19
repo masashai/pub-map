@@ -1,10 +1,27 @@
 const state = {
   shops: [],
   markers: new Map(),
+  markerBaseIcons: new Map(),
   activeId: null,
   venue: null,
 };
 const VENUE_ITEM_ID = "__venue__";
+const SHADOW_URL = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png";
+
+function createMarkerIcon(color) {
+  return L.icon({
+    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png`,
+    shadowUrl: SHADOW_URL,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+}
+
+const BLUE_ICON = createMarkerIcon("blue");
+const RED_ICON = createMarkerIcon("red");
+const YELLOW_ICON = createMarkerIcon("yellow");
 
 const map = L.map("map", {
   zoomControl: true,
@@ -51,10 +68,23 @@ function buildPopup(shop) {
 }
 
 function setActive(id) {
+  if (state.activeId) {
+    const previousMarker = state.markers.get(state.activeId);
+    const previousBaseIcon = state.markerBaseIcons.get(state.activeId);
+    if (previousMarker && previousBaseIcon) {
+      previousMarker.setIcon(previousBaseIcon);
+    }
+  }
+
   state.activeId = id;
   document.querySelectorAll(".card").forEach((card) => {
     card.classList.toggle("active", card.dataset.id === id);
   });
+
+  const currentMarker = state.markers.get(id);
+  if (currentMarker) {
+    currentMarker.setIcon(YELLOW_ICON);
+  }
 }
 
 function renderList(items) {
@@ -103,10 +133,13 @@ function initMap(shops) {
   map.fitBounds(bounds.pad(0.2));
 
   shops.forEach((shop) => {
-    const marker = L.marker([shop.lat, shop.lng]).bindPopup(buildPopup(shop));
+    const marker = L.marker([shop.lat, shop.lng], { icon: BLUE_ICON }).bindPopup(
+      buildPopup(shop)
+    );
     marker.on("click", () => setActive(shop.id));
     marker.addTo(map);
     state.markers.set(shop.id, marker);
+    state.markerBaseIcons.set(shop.id, BLUE_ICON);
   });
 }
 
@@ -117,22 +150,13 @@ function buildListItems(shops, venue) {
 
 function addVenueMarker(venue) {
   if (!venue) return;
-  const venueIcon = L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
-  const marker = L.marker([venue.lat, venue.lng], { icon: venueIcon }).bindPopup(
+  const marker = L.marker([venue.lat, venue.lng], { icon: RED_ICON }).bindPopup(
     buildPopup(venue)
   );
   marker.on("click", () => setActive(VENUE_ITEM_ID));
   marker.addTo(map);
   state.markers.set(VENUE_ITEM_ID, marker);
+  state.markerBaseIcons.set(VENUE_ITEM_ID, RED_ICON);
 }
 
 Promise.all([fetch("data/shops.json"), fetch("data/venue.json")])
