@@ -224,7 +224,7 @@ function renderSpots(shops, venue) {
 function setLocateLoading(isLoading) {
   if (!locateBtn) return;
   locateBtn.disabled = isLoading;
-  locateBtn.textContent = isLoading ? "現在地取得中..." : "現在地を更新";
+  locateBtn.textContent = isLoading ? "現在地を取得中..." : "現在地を更新";
 }
 
 function formatGeoError(error) {
@@ -238,7 +238,9 @@ function formatGeoError(error) {
   if (error.code === error.TIMEOUT) {
     return "現在地取得がタイムアウトしました。もう一度お試しください。";
   }
-  return "現在地の取得に失敗しました。";
+  const detail =
+    typeof error.message === "string" && error.message.trim() ? `\n詳細: ${error.message}` : "";
+  return `現在地の取得に失敗しました。${detail}`;
 }
 
 function getCurrentPosition(options) {
@@ -263,15 +265,15 @@ async function updateUserLocation() {
     try {
       position = await getCurrentPosition({
         enableHighAccuracy: true,
-        timeout: 12000,
-        maximumAge: 0,
+        timeout: 30000,
+        maximumAge: 30000,
       });
     } catch (error) {
       // Retry with lower accuracy because some environments fail with high accuracy.
       position = await getCurrentPosition({
         enableHighAccuracy: false,
-        timeout: 12000,
-        maximumAge: 30000,
+        timeout: 30000,
+        maximumAge: 120000,
       });
     }
 
